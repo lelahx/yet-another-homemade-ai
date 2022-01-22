@@ -2,8 +2,8 @@ import numpy as np
 import data_input as dinput
 import ai_framework as ai
 
-img_file = open("work in progress & drafts/chardata/train-images.idx3-ubyte", "rb")
-lbl_file = open("work in progress & drafts/chardata/train-labels.idx1-ubyte", "rb")
+img_file = open("chardata/train-images.idx3-ubyte", "rb")
+lbl_file = open("chardata/train-labels.idx1-ubyte", "rb")
 
 mnist = dinput.dataset(img_file, lbl_file)
 
