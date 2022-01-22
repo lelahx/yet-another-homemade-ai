@@ -5,12 +5,15 @@ def ReLU(x: np.array):
     """
     Returns the original array, with negative values replaces by zeros.
     """
+    
+    y = np.copy(x)
+    y[y < 0] = 0
 
-    return np.maximum(np.zeros(x.shape), x)
+    return y
 
 def sigmoid(x: np.array):
     """
-    Squishes the real line between 0 and 1.
+    Squishes the real line between 0 and 1 for every value in the given array, and returns a new array with it
     """
 
     return 1 / (1 + np.exp(-x))

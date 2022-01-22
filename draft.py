@@ -11,7 +11,7 @@ all_chars = [dinput.example(mnist, n) for n in range(len(mnist))]
 
 print(mnist, len(mnist), mnist.width, mnist.height)
 
-[print(char) for char in all_chars]
+[print(char) for char in all_chars[:3]]
 
 #L1 = ai.layer(mnist.pixel_count, 10)
 
