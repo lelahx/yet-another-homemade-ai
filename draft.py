@@ -9,9 +9,21 @@ mnist = dinput.dataset(img_file, lbl_file)
 
 all_chars = [dinput.example(mnist, n) for n in range(len(mnist))]
 
-print(mnist, len(mnist), mnist.width, mnist.height)
+#print(mnist, len(mnist), mnist.width, mnist.height)
 
-[print(char) for char in all_chars[:3]]
+#[print(char) for char in all_chars[:3]]
+
+
+a = ai.network(mnist.pixel_count, 2, 10)
+
+print(all_chars[0])
+
+
+print(a.run(all_chars[0].values))
+
+
+
+
 
 #L1 = ai.layer(mnist.pixel_count, 10)
 
