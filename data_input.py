@@ -1,4 +1,3 @@
-from io import BufferedReader
 import numpy as np
 
 class dataset:
@@ -6,26 +5,29 @@ class dataset:
     Object which imports and holds all the relevant information and  data of a dataset.
     """
 
-    def __init__(self, imagefile: BufferedReader, labelfile: BufferedReader):
-        self.id_imgs, self.id_lbls = int.from_bytes(imagefile.read(4), byteorder='big'), int.from_bytes(labelfile.read(4), byteorder='big') # Gets the IDs of the image and label datasets in the first 4 bytes of each file
-        assert self.id_imgs == 2051 and self.id_lbls == 2049 # Dataset files should contain these IDs
+    def __init__(self, img_path: str, lbl_path: str):
+        
+        with open(img_path, "rb") as imagefile, open(lbl_path, "rb") as labelfile:
 
-        self.size = int.from_bytes(imagefile.read(4), byteorder='big') # Reads the size of the dataset in the next 4 bytes
-        assert self.size == int.from_bytes(labelfile.read(4), byteorder='big') # Size should be the same in the image and label files
+            self.id_imgs, self.id_lbls = int.from_bytes(imagefile.read(4), byteorder='big'), int.from_bytes(labelfile.read(4), byteorder='big') # Gets the IDs of the image and label datasets in the first 4 bytes of each file
+            assert self.id_imgs == 2051 and self.id_lbls == 2049 # Dataset files should contain these IDs
 
-        self.labels = np.array(list(labelfile.read())) # Reads the labels in the rest of the label file and puts them in a vector
+            self.size = int.from_bytes(imagefile.read(4), byteorder='big') # Reads the size of the dataset in the next 4 bytes
+            assert self.size == int.from_bytes(labelfile.read(4), byteorder='big') # Size should be the same in the image and label files
 
-        self.width, self.height = int.from_bytes(imagefile.read(4), byteorder='big'), int.from_bytes(imagefile.read(4), byteorder='big') # Reads the width and height of the images in the next 4 + 4 bytes of the file
-        self.pixel_count = self.width * self.height # Defines the pixel count of individual images from their dimensions
+            self.labels = np.array(list(labelfile.read())) # Reads the labels in the rest of the label file and puts them in a vector
 
-        set = []
-        img = imagefile.read(self.pixel_count)
-        while img: # img becomes 0 when the end of the file is reached, thus this loop runs until reaching it
-            set.append(list(img)) # Creates a vector with all the pixel values of an image and appends it to a list
+            self.width, self.height = int.from_bytes(imagefile.read(4), byteorder='big'), int.from_bytes(imagefile.read(4), byteorder='big') # Reads the width and height of the images in the next 4 + 4 bytes of the file
+            self.pixel_count = self.width * self.height # Defines the pixel count of individual images from their dimensions
 
+            set = []
             img = imagefile.read(self.pixel_count)
-    
-        self.images = np.array(set) # Creates a matrix with all the values for each image on every line
+            while img: # img becomes 0 when the end of the file is reached, thus this loop runs until reaching it
+                set.append(list(img)) # Creates a vector with all the pixel values of an image and appends it to a list
+
+                img = imagefile.read(self.pixel_count)
+        
+            self.images = np.array(set) # Creates a matrix with all the values for each image on every line
     
     def __len__(self) -> int: # Returns the size of the dataset when calling the len function on it
         return self.size
@@ -68,3 +70,9 @@ class example:
         fulltext = "\n".join(lines) # Joins the lines into a single string and inserts newlines between them
 
         return f"{self.label}:\n{fulltext}" # Returns the label of the example followed by its approximate text visualization
+    
+    def get_pixels(self) -> np.ndarray:
+        return np.copy(self.values)
+    
+    def get_lblarray(self) -> np.ndarray:
+        return np.copy(self.expected_output)
