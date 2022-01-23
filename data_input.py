@@ -1,3 +1,4 @@
+from io import BufferedReader
 import numpy as np
 
 class dataset:
@@ -5,7 +6,7 @@ class dataset:
     Object which imports and holds all the relevant information and  data of a dataset.
     """
 
-    def __init__(self, imagefile, labelfile):
+    def __init__(self, imagefile: BufferedReader, labelfile: BufferedReader):
         self.id_imgs, self.id_lbls = int.from_bytes(imagefile.read(4), byteorder='big'), int.from_bytes(labelfile.read(4), byteorder='big') # Gets the IDs of the image and label datasets in the first 4 bytes of each file
         assert self.id_imgs == 2051 and self.id_lbls == 2049 # Dataset files should contain these IDs
 
@@ -26,13 +27,13 @@ class dataset:
     
         self.images = np.array(set) # Creates a matrix with all the values for each image on every line
     
-    def __len__(self): # Returns the size of the dataset when calling the len function on it
+    def __len__(self) -> int: # Returns the size of the dataset when calling the len function on it
         return self.size
 
-    def __repr__(self): # Canonical string representation of the dataset
+    def __repr__(self) -> str: # Canonical string representation of the dataset
         return f"{repr(self.labels)}: {repr(self.images)}"
     
-    def __str__(self): # Simple string representation of the dataset
+    def __str__(self) -> str: # Simple string representation of the dataset
         return f"{str(self.labels)}: {str(self.images)}"
 
 
@@ -55,13 +56,13 @@ class example:
         
         self.expected_output = out # This vector is the ideal output of the neural network for the example
     
-    def __len__(self): # Returns the size (pixel count) of the example when calling the len function on it
+    def __len__(self) -> int: # Returns the size (pixel count) of the example when calling the len function on it
         return self.size
 
-    def __repr__(self): # Canonical string representation of the example
+    def __repr__(self) -> str: # Canonical string representation of the example
         return f"{self.label}: {repr(self.values)}"
     
-    def __str__(self): # Simpler and visual string representation of the example
+    def __str__(self) -> str: # Simpler and visual string representation of the example
         rows = self.values.reshape((self.height, self.width)) # Reshapes the pixel values vedctor into a 28*28 matrix
         lines = ["".join(["▯" if p < 128 else "▮" for p in row]) for row in rows] # In every row, replaces values smaller than 128 with hollow boxes, else filled boxes. Then, joints the characters together into a single string
         fulltext = "\n".join(lines) # Joins the lines into a single string and inserts newlines between them

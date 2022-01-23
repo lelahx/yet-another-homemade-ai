@@ -1,7 +1,7 @@
 import numpy as np
 import data_input as dinput
 
-def ReLU(x: np.ndarray):
+def ReLU(x: np.ndarray) -> np.ndarray:
     """
     Returns the original array, with negative values replaces by zeros.
     """
@@ -11,7 +11,7 @@ def ReLU(x: np.ndarray):
 
     return y
 
-def sigmoid(x: np.ndarray):
+def sigmoid(x: np.ndarray) -> np.ndarray:
     """
     Squishes the real line between 0 and 1 for every value in the given array, and returns a new array with it
     """
@@ -24,18 +24,18 @@ class layer:
     Object defining an individual layer of a neural network.
     """
 
-    def __init__(self, n_inputs: int, n_neurons: int, act=ReLU):
+    def __init__(self, n_inputs: int, n_neurons: int, act: function=ReLU):
         self.w = np.random.random((n_neurons, n_inputs))*2 - 1 # Creates a weights matrix of shape (n_neurons, n_inputs) with random values between -1 and 1
         self.b = np.zeros(n_neurons) # Creates a weights vector with n_neurons values which are initialized at 0
         self.f_act = act # Defines the activation function of the layer
 
         self.size = n_neurons
 
-    def __len__(self):
+    def __len__(self) -> int:
 
         return self.size
 
-    def activate(self, inputs: np.ndarray):
+    def activate(self, inputs: np.ndarray) -> np.ndarray:
         """
         Activates the layer and returns the values of the neuron.
         """
@@ -44,16 +44,14 @@ class layer:
 
 
 class network:
-    def __init__(self, *sizes: int, last_act=sigmoid):
-        assert sizes != []
-        print(sizes)
+    def __init__(self, *sizes: int, last_act: function=sigmoid):
+        assert len(sizes) >= 2
 
         self.layers = [layer(sizes[i], sizes[i + 1]) for i in range(len(sizes) - 2)]
-
         self.layers.append(layer(sizes[-2], sizes[-1], last_act))
 
 
-    def run(self, input: np.ndarray):
+    def run(self, input: np.ndarray) -> np.ndarray:
 
         values = input
         for current_layer in self.layers:
