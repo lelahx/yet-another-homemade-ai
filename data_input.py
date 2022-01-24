@@ -5,7 +5,7 @@ class dataset:
     Object which imports and holds all the relevant information and  data of a dataset.
     """
 
-    def __init__(self, img_path: str, lbl_path: str):
+    def __init__(self, img_path: str, lbl_path: str) -> None:
         
         with open(img_path, "rb") as imagefile, open(lbl_path, "rb") as labelfile:
 
@@ -31,20 +31,25 @@ class dataset:
     
     def __len__(self) -> int: # Returns the size of the dataset when calling the len function on it
         return self.size
+    
+    def __getitem__(self, n: int): # Allows the use of dataset[n] to return individual example of index n
+        return example(self, n)
 
     def __repr__(self) -> str: # Canonical string representation of the dataset
-        return f"{repr(self.labels)}: {repr(self.images)}"
+        return f"/{repr(self.labels)}: {repr(self.images)}/"
     
     def __str__(self) -> str: # Simple string representation of the dataset
         return f"{str(self.labels)}: {str(self.images)}"
-
+    
+    def get_pixelcount(self) -> int: # Returns the number of pixels in each image of the dataset
+        return self.pixel_count
 
 class example:
     """
-    Object which holds the data and label of an individual example of the dataset.
+    Object which holds the data and label of an individual image of the dataset.
     """
 
-    def __init__(self, dtst: dataset, index: int):
+    def __init__(self, dtst: dataset, index: int) -> None:
         assert index <= len(dtst) # The index of the example we want to extract should be less than the total size of the dataset
         
         self.values = dtst.images[index] # Assign the vector which contains the pixel values to a variable
@@ -62,17 +67,17 @@ class example:
         return self.size
 
     def __repr__(self) -> str: # Canonical string representation of the example
-        return f"{self.label}: {repr(self.values)}"
+        return f"/{self.label}: {repr(self.values)}/"
     
     def __str__(self) -> str: # Simpler and visual string representation of the example
-        rows = self.values.reshape((self.height, self.width)) # Reshapes the pixel values vedctor into a 28*28 matrix
+        rows = self.values.reshape((self.height, self.width)) # Reshapes the pixel values vector into a 28*28 matrix
         lines = ["".join(["▯" if p < 128 else "▮" for p in row]) for row in rows] # In every row, replaces values smaller than 128 with hollow boxes, else filled boxes. Then, joints the characters together into a single string
         fulltext = "\n".join(lines) # Joins the lines into a single string and inserts newlines between them
 
         return f"{self.label}:\n{fulltext}" # Returns the label of the example followed by its approximate text visualization
     
-    def get_pixels(self) -> np.ndarray:
+    def get_pixelvec(self) -> np.ndarray: # Returns a copy of the values vector of the example
         return np.copy(self.values)
     
-    def get_lblarray(self) -> np.ndarray:
+    def get_labelvec(self) -> np.ndarray: # Returns a copy of the label vector of the example
         return np.copy(self.expected_output)

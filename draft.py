@@ -5,42 +5,16 @@ import ai_framework as ai
 img_file = "chardata/train-images.idx3-ubyte"
 lbl_file = "chardata/train-labels.idx1-ubyte"
 
-#mnist = dinput.dataset(img_file, lbl_file)
+mnist = dinput.dataset(img_file, lbl_file)
+all_examples = [mnist[i] for i in range(len(mnist))]
 
-#all_chars = [dinput.example(mnist, n) for n in range(len(mnist))]
+batches = [all_examples[i:i+100] for i in range(0, len(all_examples), 100)]
 
-#print(mnist, len(mnist), mnist.width, mnist.height)
+param_file = "test_NN.csv"
 
-#[print(char) for char in all_chars[:3]]
+my_nn = ai.network(mnist.get_pixelcount(), 14, 14, 10)
+my_nn.store(param_file)
 
+print(all_examples[0], '\n')
 
-#a = ai.network(mnist.pixel_count, 2, 10)
-b = ai.network(from_file='neuralnet_params.csv')
-
-#b = ai.network(5, 6, 7)
-
-#b.store()
-
-print(b[0]['weights'])
-
-
-lol = np.arange(5.0)
-
-print(b.compute(lol))
-
-#print(all_chars[0])
-
-
-#print(a.run(all_chars[0].get_pixels()))
-
-
-
-
-
-#L1 = ai.layer(mnist.pixel_count, 10)
-
-#all_VN1 = [L1.activate(char) for char in all_chars[:1]]
-
-#print(L1.w)
-
-#print(all_VN1, len(all_VN1))
+print(my_nn.compute(all_examples[0].get_pixelvec()))
